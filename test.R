@@ -3,10 +3,8 @@ getwd()
 library(dplyr)
 library(ggplot2)
 
-
-students_institution <- read.csv("data/students-institution-data.csv", sep=";", dec = ",")
-students_major <- read.csv("data/students-major-data.csv", sep=";", dec = ",")
-graduates_institution <- read.csv("data/graduates-institution-data.csv", sep=";", dec = ",")
+# ładujemy dane z pliku graduates-major-data
+# poniewaz plik ten jest zbyt duzy nie uwzględniamy go w rozwiązaniu
 graduates_major <- read.csv("data/graduates-major-data.csv", sep=";", dec = ",")
 
 
@@ -17,6 +15,7 @@ woj <- data.frame(P_WOJ = c(2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32),
                            "pomorskie", "śląskie", "świętokrzyskie", 
                            "warmińsko-mazurskie", "wielkopolskie", "zachodniopomorskie"))
 
+# wstępne przygotowanie danych do wykresów
 df <- graduates_major %>% select(P_E_ZAR, P_WOJ, P_ROKDYP, P_POZIOM, P_KIERUNEK_NAZWA, P_NAZWA_UCZELNI, P_UCZELNIA_SKROT, P_DZIEDZINA) %>% 
   merge(woj) %>% 
   filter(P_DZIEDZINA != "")
@@ -25,7 +24,7 @@ write.csv(df, file = "prepared_data.csv")
 
 
 
-
+## testowanie wykresu
 write.csv(woj, file = "woj.csv")
 
 str(df$P_ROKDYP)
