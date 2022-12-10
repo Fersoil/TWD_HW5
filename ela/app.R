@@ -2,6 +2,7 @@ library(shiny)
 library(bslib)
 library(dplyr)
 library(ggplot2)
+library(shinythemes)
 
 
 df <- read.csv("prepared_data.csv") # load pre-prepared data
@@ -32,7 +33,9 @@ server <- function(input, output) {
         y = "Średnie wynagrodzenie (w PLN)",
         color = "Dziedzina studiów"
       ) + theme_bw() +
-      ylim(min(plt$srednie_wynagrodzenie, na.rm=TRUE), max(plt$srednie_wynagrodzenie, na.rm = TRUE))
+      ylim(min(plt$srednie_wynagrodzenie, na.rm=TRUE), max(plt$srednie_wynagrodzenie, na.rm = TRUE)) +
+      theme(panel.background = element_rect(fill = "transparent", colour = "black"),
+            plot.background = element_rect(fill = "transparent", colour = NA))
     #ylim(2400, 5000)
   })
   
@@ -61,13 +64,15 @@ server <- function(input, output) {
       # theme(legend.text = element_text("Doświadczenie zawodowe przed uzyskaniem dyplomu")) +
       guides(fill=guide_legend(title=" Doświadczenie zawodowe przed \n uzyskaniem dyplomu")) +
       scale_y_continuous(expand = c(0, 0)) +
-      ylim(min(dff$sredni_czas, na.rm=TRUE), max(dff$sredni_czas, na.rm = TRUE))
+      ylim(min(dff$sredni_czas, na.rm=TRUE), max(dff$sredni_czas, na.rm = TRUE)) +
+      theme(panel.background = element_rect(fill = "transparent", colour = "black"),
+            plot.background = element_rect(fill = "transparent", colour = NA))
     
   })
 }
 
 
-ui1 <- fluidPage(
+ui1 <- fluidPage(theme = shinytheme("slate"),
   
   # Application title
   titlePanel("Średnie wynagrodzenie absolwentów uczelni wyższych w zależności od regionu"),
