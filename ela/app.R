@@ -81,8 +81,7 @@ app_ui <- navbarPage("Badanie losów studentów",
                         <footer class='text-center text-sm-start' style='width:100%;'>
                         <hr>
                         <p class='text-center' style='font-size:12px;'>
-                          © 2021 Copyright:
-                          <a class='text-dark' href='https://www.mi2.ai/'>MI2</a>
+                          Piotr Kosakowski i Tymoteusz Kwieciński
                         </p>
                         </footer>
                       "),
