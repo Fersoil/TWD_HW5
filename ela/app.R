@@ -6,6 +6,8 @@ library(ggplot2)
 
 df <- read.csv("prepared_data.csv") # load pre-prepared data
 
+dff <- read.csv("prepared_data_plot2.csv")
+
 server <- function(input, output) {
   
   # generuj wykres średniego wynagrodzenia
@@ -32,6 +34,35 @@ server <- function(input, output) {
       ) + theme_bw() +
       ylim(min(plt$srednie_wynagrodzenie, na.rm=TRUE), max(plt$srednie_wynagrodzenie, na.rm = TRUE))
     #ylim(2400, 5000)
+  })
+  
+  # generuj wykres średniego czasu od uzyskania dyplomu do znalezienia pracy
+  output$secondPlot <- renderPlot({
+    plt <- dff
+    
+    if(input$region != "*") {
+      plt <- plt %>% filter(WOJ_NAME == input$region)
+    } 
+    
+    plt %>% 
+      filter(P_ROKDYP %in% input$rok) %>% 
+      group_by(P_DZIEDZINA, P_ROKDYP, dosw, P_WOJ, WOJ_NAME) %>% 
+      summarise(sredni_czas = mean(sredni_czas, na.rm = T)) %>%
+      ggplot(aes(fill = dosw, y = sredni_czas, x = P_DZIEDZINA)) +
+      geom_col(position="dodge") +
+      labs(
+        title = "Średni czas od uzyskania dyplomu do podjęcia pierwszej pracy po uzyskaniu dyplomu wśród absolwentów studiów z danej dziedziny",
+        subtitle = ifelse(input$region == "*", "w całej Polsce", paste("w województwie", input$region)),
+        x = "Dziedzina",
+        y = "Średni czas (w miesiącach)"
+      ) + 
+      theme_bw() +
+      scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+      # theme(legend.text = element_text("Doświadczenie zawodowe przed uzyskaniem dyplomu")) +
+      guides(fill=guide_legend(title=" Doświadczenie zawodowe przed \n uzyskaniem dyplomu")) +
+      scale_y_continuous(expand = c(0, 0)) +
+      ylim(min(dff$sredni_czas, na.rm=TRUE), max(dff$sredni_czas, na.rm = TRUE))
+    
   })
 }
 
@@ -69,13 +100,37 @@ ui1 <- fluidPage(
 
 
 ui2 <- fluidPage(
-  titlePanel("druga analizka") 
-  # TODO
+  
+  # Site title
+  titlePanel("Średnie wynagrodzenie absolwentów uczelni wyższych w zależności od regionu"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      selectInput(
+        inputId = "region",
+        label = "Wybór regionu:",
+        choices = c("Cała polska" = "*", unique(pull(dff, WOJ_NAME)))
+      ),
+      
+      checkboxGroupInput("rok", label = "Wybierz rok wydania dyplomu",
+                         choices = unique(pull(dff, P_ROKDYP)),
+                         selected = unique(pull(dff, P_ROKDYP))),),
+    
+    # Show a plot 
+    mainPanel(
+      shinycssloaders::withSpinner(
+        plotOutput("secondPlot"),
+        type = 1,
+        color = "#00ff00",
+        size = 1 # getOption("spinner.size", default = 1)
+      )
+    )
+  )
 )
 
 app_ui <- navbarPage("Badanie losów studentów",
                      tabPanel("Wynagrodzenia", ui1),
-                     tabPanel("Analiza 2", ui2),
+                     tabPanel("Pierwsza praca po studiach", ui2),
                      theme = bs_theme(bootswatch = "cosmo"),
                      footer = shiny::HTML("
                         <footer class='text-center text-sm-start' style='width:100%;'>
