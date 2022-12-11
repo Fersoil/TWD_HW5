@@ -54,7 +54,7 @@ server <- function(input, output) {
       ggplot(aes(fill = dosw, y = sredni_czas, x = P_DZIEDZINA)) +
       geom_col(position="dodge") +
       labs(
-        title = "Średni czas od uzyskania dyplomu do podjęcia pierwszej pracy po uzyskaniu dyplomu wśród absolwentów studiów z danej dziedziny",
+        title = "Średni czas od uzyskania dyplomu do podjęcia pierwszej pracy po uzyskaniu dyplomu \nwśród absolwentów studiów z danej dziedziny",
         subtitle = ifelse(input$region == "*", "w całej Polsce", paste("w województwie", input$region)),
         x = "Dziedzina",
         y = "Średni czas (w miesiącach)"
