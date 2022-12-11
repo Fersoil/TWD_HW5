@@ -65,14 +65,14 @@ server <- function(input, output) {
       guides(fill=guide_legend(title=" Doświadczenie zawodowe przed \n uzyskaniem dyplomu")) +
       scale_y_continuous(expand = c(0, 0)) +
       ylim(min(dff$sredni_czas, na.rm=TRUE), max(dff$sredni_czas, na.rm = TRUE)) +
-      theme(panel.background = element_rect(fill = "transparent", colour = "black"),
+      theme(panel.background = element_rect(fill = "transparent", colour = NA),
             plot.background = element_rect(fill = "transparent", colour = NA))
     
   })
 }
 
 
-ui1 <- fluidPage(theme = shinytheme("slate"),
+ui1 <- fluidPage(theme = shinytheme("cosmo"),
   
   # Application title
   titlePanel("Średnie wynagrodzenie absolwentów uczelni wyższych w zależności od regionu"),
@@ -84,7 +84,7 @@ ui1 <- fluidPage(theme = shinytheme("slate"),
         inputId = "school",
         label = "Wybór regionu:",
         choices = c("Cała polska" = "*", unique(pull(df, WOJ_NAME)))
-      ),
+      ) ,
       checkboxGroupInput("dziedzina", label = "Wybierz dziedziny studiów do pokazania na wykresie",
                          choices = unique(pull(df, P_DZIEDZINA)),
                          selected = unique(pull(df, P_DZIEDZINA))),),
@@ -92,7 +92,8 @@ ui1 <- fluidPage(theme = shinytheme("slate"),
     # Show a plot of the generated distribution
     mainPanel(
       shinycssloaders::withSpinner(
-        plotOutput("earningsPlot"), 
+        plotOutput("earningsPlot",
+                   height = "600px"), 
         type = 1, 
         color = "#00ff00", 
         size = 1 # getOption("spinner.size", default = 1)
@@ -105,26 +106,30 @@ ui1 <- fluidPage(theme = shinytheme("slate"),
 
 
 ui2 <- fluidPage(
-  
+
   # Site title
   titlePanel("Średnie wynagrodzenie absolwentów uczelni wyższych w zależności od regionu"),
-  
+
   sidebarLayout(
     sidebarPanel(
+ 
       selectInput(
         inputId = "region",
         label = "Wybór regionu:",
         choices = c("Cała polska" = "*", unique(pull(dff, WOJ_NAME)))
       ),
-      
+
       checkboxGroupInput("rok", label = "Wybierz rok wydania dyplomu",
                          choices = unique(pull(dff, P_ROKDYP)),
-                         selected = unique(pull(dff, P_ROKDYP))),),
-    
-    # Show a plot 
+                         selected = unique(pull(dff, P_ROKDYP))),
+     
+      ),
+
+    # Show a plot
     mainPanel(
       shinycssloaders::withSpinner(
-        plotOutput("secondPlot"),
+        plotOutput("secondPlot",
+                   height = "600px"),
         type = 1,
         color = "#00ff00",
         size = 1 # getOption("spinner.size", default = 1)
@@ -132,6 +137,35 @@ ui2 <- fluidPage(
     )
   )
 )
+# ui2 <- fluidPage(
+#   
+#   # Site title
+#   titlePanel("Średnie wynagrodzenie absolwentów uczelni wyższych w zależności od regionu"),
+#   
+#   fluidRow(
+#     column(6, 
+#            selectInput(
+#                      inputId = "region",
+#                      label = "Wybór regionu:",
+#                      choices = c("Cała polska" = "*", unique(pull(dff, WOJ_NAME)))
+#                    ),
+# 
+#                    checkboxGroupInput("rok", label = "Wybierz rok wydania dyplomu",
+#                                       choices = unique(pull(dff, P_ROKDYP)),
+#                                       selected = unique(pull(dff, P_ROKDYP))),)
+#     ),
+#   fluidRow(
+#     shinycssloaders::withSpinner(
+#               plotOutput("secondPlot"),
+#               type = 1,
+#               color = "#00ff00",
+#               size = 1 # getOption("spinner.size", default = 1)
+#             )
+#   )
+# )
+  
+  
+
 
 app_ui <- navbarPage("Badanie losów studentów",
                      tabPanel("Wynagrodzenia", ui1),
@@ -146,6 +180,14 @@ app_ui <- navbarPage("Badanie losów studentów",
                         </footer>
                       "),
                      header = tags$head(tags$link(rel = "stylesheet", href = "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"))
+                     # tags$head(tags$style('
+                     #                       body {
+                     #                          font-family: Arial; 
+                     #                          font-size: 20px; 
+                     #                          font-style: italic;
+                     #                          color: red;
+                     #                       }'
+                     #                                         ))
                      
 )
 
